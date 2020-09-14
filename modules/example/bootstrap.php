@@ -6,12 +6,12 @@ use YOOtheme\Path;
 include_once __DIR__ . '/src/AssetsListener.php';
 include_once __DIR__ . '/src/SettingsListener.php';
 include_once __DIR__ . '/src/SourceListener.php';
-include_once __DIR__ . '/src/SourceController.php';
+//include_once __DIR__ . '/src/SourceController.php';
 
 return [
-  'routes' => [
-    ['get', '/joomla/civievent', [SourceController::class, 'events']],
-  ],
+  //'routes' => [
+  //  ['get', '/joomla/civievent', [SourceController::class, 'events']],
+  //],
 
   'events' => [
 
