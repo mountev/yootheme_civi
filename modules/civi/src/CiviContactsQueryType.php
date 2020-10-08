@@ -2,15 +2,15 @@
 
 use CiviUtils as CV;
 
-class CiviEventsQueryType
+class CiviContactsQueryType
 {
   public static function config()
   {
     return [
       'fields' => [
-        'civievents' => [
+        'civicontacts' => [
           'type' => [
-            'listOf' => 'CiviEvent',
+            'listOf' => 'CiviContact',
           ],
 
           // Arguments passed to the resolver function
@@ -34,7 +34,7 @@ class CiviEventsQueryType
 
           'metadata' => [
             // Label in dynamic content select box
-            'label' => 'CiviCRM Events',
+            'label' => 'CiviCRM Contacts',
 
             // Option group in dynamic content select box
             'group' => 'CiviCRM',
@@ -52,7 +52,7 @@ class CiviEventsQueryType
               ],
 
               '_offset' => [
-                'description' => 'Set the starting point and limit the number of events.',
+                'description' => 'Set the starting point and limit the number of contacts.',
                 'type' => 'grid',
                 'width' => '1-2',
 
@@ -84,11 +84,12 @@ class CiviEventsQueryType
                   'order' => [
                     'label' => 'Order',
                     'type' => 'select',
-                    'default' => 'title',
+                    'default' => 'sort_name',
                     'options' => [
-                      'Event Title' => 'title',
-                      'Event Start Date' => 'start_date',
-                      'Event End Date' => 'end_date',
+                      'Sort Name' => 'sort_name',
+                      'Display Name' => 'display_name',
+                      'Last Name'  => 'last_name',
+                      'First Name' => 'first_name',
                     ],
                   ],
                   'order_direction' => [
@@ -124,10 +125,9 @@ class CiviEventsQueryType
       if (!empty($args['order'])) {
         $options['sort'] = $args['order'] . ' ' . $args['order_direction'];
       }
-      $options['is_active'] = 1;
-      $result = civicrm_api3('Event', 'get', [
+      $result = civicrm_api3('Contact', 'get', [
         'sequential' => 1,
-        'options' => $options,
+        'options'    => $options,
       ]);
       $entities = $result['values'];
     }
