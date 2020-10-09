@@ -119,13 +119,9 @@ class CiviContactsQueryType
     static $entities = [];
     if (empty($entities)) {
       CV::init();
-      $options = [
-        'limit' => $args['limit']
-      ];
-      if (!empty($args['order'])) {
-        $options['sort'] = $args['order'] . ' ' . $args['order_direction'];
-      }
-      $result = civicrm_api3('Contact', 'get', [
+
+      $options = CV::getOptions($args);
+      $result  = civicrm_api3('Contact', 'get', [
         'sequential' => 1,
         'options'    => $options,
       ]);

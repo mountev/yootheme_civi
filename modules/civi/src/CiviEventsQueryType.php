@@ -118,17 +118,33 @@ class CiviEventsQueryType
     static $entities = [];
     if (empty($entities)) {
       CV::init();
-      $options = [
-        'limit' => $args['limit']
-      ];
-      if (!empty($args['order'])) {
-        $options['sort'] = $args['order'] . ' ' . $args['order_direction'];
-      }
+
+      $options = CV::getOptions($args);
       $options['is_active'] = 1;
+
       $result = civicrm_api3('Event', 'get', [
         'sequential' => 1,
         'options' => $options,
+        // we could fetch location with chaining but that would result in many fields
+        // for now we would stick to display field as used by event info page
+        //'api.LocBlock.get' => ['api.Address.get' => []],
       ]);
+      // for now we would stick to display field as used by event info page
+      foreach ($result['values'] as &$event) {
+        $params = ['entity_id' => $event['id'], 'entity_table' => 'civicrm_event'];
+        $location = CRM_Core_BAO_Location::getValues($params, TRUE);
+        if (!empty($location['address'][1])) {
+          foreach (CV::getEventLocAddressFields() as $field) {
+            $event["location_address_{$field}"] = CRM_Utils_Array::value($field, $location['address'][1]);
+          }
+        }
+        $url = CRM_Utils_System::url('civicrm/event/register',
+          "id={$event['id']}&reset=1",
+          TRUE, NULL, TRUE,
+          TRUE
+        );
+        $event["registration_url"] = $url;
+      }
       $entities = $result['values'];
     }
     return $entities;

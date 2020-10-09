@@ -13,28 +13,15 @@ class CiviContactType
       CV::init();
 
       $result = civicrm_api3('Contact', 'getfields', []);
-      $entityFields = [];
-      if (!empty($result['values'])) {
-        $count = 0;
-        foreach ($result['values'] as $key => $field) {
-          $entityFields['fields'][$key] = [
-            'name' => $key,
-            'type' => 'String',
-            'metadata' => [
-              'label' => $field['title'],
-              'group' => 'CiviCRM'
-            ],
-          ];
-        }
-        if (!empty($entityFields)) {
-          $entityFields['metadata'] = [
-            // Label used in the customizer
-            'label' => 'CiviContact',
+      $entityFields = CV::getEntityFields($result);
+      if (!empty($entityFields)) {
+        $entityFields['metadata'] = [
+          // Label used in the customizer
+          'label' => 'CiviContact',
 
-            // Denotes that this is an object type and makes the type usable as dynamic content source
-            'type' => true,
-          ];
-        }
+          // Denotes that this is an object type and makes the type usable as dynamic content source
+          'type' => true,
+        ];
       }
     }
     return $entityFields;
