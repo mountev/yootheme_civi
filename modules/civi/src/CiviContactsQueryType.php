@@ -53,9 +53,9 @@ class CiviContactsQueryType
                 'description' => 'Select a contact type.',
                 // Default or custom field types can be used
                 'type' => 'select',
-                'default' => 0,
+                'default' => '',
                 'options' => [
-                  '- ANY -'      => 0,
+                  '- ANY -'      => '',
                   'Individual'   => 'Individual',
                   'Organization' => 'Organization',
                   'Household'    => 'Household',
