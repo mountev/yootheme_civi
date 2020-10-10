@@ -47,8 +47,9 @@ class CiviContactType
     'email',
     'on_hold',
     'im',
-    'group',
-    'tag',
+    // requires chaining and result formatting
+    //'group',
+    //'tag',
     'uf_user',
   ];
 
