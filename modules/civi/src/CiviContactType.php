@@ -3,6 +3,10 @@ use CiviUtils as CV;
 
 class CiviContactType
 {
+  public static $fieldsToAdd = [
+    'image' => 'Image',
+  ];
+
   /**
    * @return array
    */
@@ -13,7 +17,7 @@ class CiviContactType
       CV::init();
 
       $result = civicrm_api3('Contact', 'getfields', []);
-      $entityFields = CV::getEntityFields($result);
+      $entityFields = CV::getEntityFields($result, [], self::$fieldsToAdd);
       if (!empty($entityFields)) {
         $entityFields['metadata'] = [
           // Label used in the customizer

@@ -23,7 +23,9 @@ class CiviEventType
     'intro_text',
   ];
   public static $fieldsToAdd = [
-    'registration_url' => 'Registration URL',
+    'fee_block' => 'Fee Block',
+    'registration_url'      => 'Registration URL',
+    'registration_url_link' => 'Registration URL href Link',
   ];
 
   /**

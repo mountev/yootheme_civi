@@ -6,6 +6,7 @@ class CiviEventsQueryType
 {
   public static function config()
   {
+    CV::init();
     return [
       'fields' => [
         'civievents' => [
@@ -21,8 +22,8 @@ class CiviEventsQueryType
             'limit' => [
               'type' => 'Int',
             ],
-            'type_id' => [
-              'type' => 'String'
+            'event_type_id' => [
+              'type' => 'Int'
             ],
             'order' => [
               'type' => 'String',
@@ -42,13 +43,15 @@ class CiviEventsQueryType
             // Fields to input arguments in the customizer
             'fields' => [
               // The array key corresponds to a key in the 'args' array above
-              'type_id' => [
+              'event_type_id' => [
                 // Field label
-                'label' => 'Type ID',
+                'label' => 'Event Type',
                 // Field description
-                'description' => 'Input a type ID.',
+                'description' => 'Select an event type.',
                 // Default or custom field types can be used
-                'type' => 'text',
+                'type' => 'select',
+                'default' => 0,
+                'options' => ['- ANY -' => 0] + array_flip(CRM_Event_PseudoConstant::eventType()),
               ],
 
               '_offset' => [
@@ -120,15 +123,22 @@ class CiviEventsQueryType
       CV::init();
 
       $options = CV::getOptions($args);
-      $options['is_active'] = 1;
 
-      $result = civicrm_api3('Event', 'get', [
+      $params  = [
         'sequential' => 1,
-        'options' => $options,
+        'is_active'  => 1,
+        'options'    => $options,
         // we could fetch location with chaining but that would result in many fields
         // for now we would stick to display field as used by event info page
         //'api.LocBlock.get' => ['api.Address.get' => []],
-      ]);
+      ];
+      foreach (['event_type_id'] as $para) {
+        if (!empty($args[$para])) {
+          $params[$para] = $args[$para];
+        }
+      }
+
+      $result = civicrm_api3('Event', 'get', $params);
       // for now we would stick to display field as used by event info page
       foreach ($result['values'] as &$event) {
         $params = ['entity_id' => $event['id'], 'entity_table' => 'civicrm_event'];
@@ -138,12 +148,31 @@ class CiviEventsQueryType
             $event["location_address_{$field}"] = CRM_Utils_Array::value($field, $location['address'][1]);
           }
         }
-        $url = CRM_Utils_System::url('civicrm/event/register',
-          "id={$event['id']}&reset=1",
-          TRUE, NULL, TRUE,
-          TRUE
-        );
-        $event["registration_url"] = $url;
+        $event["registration_url"] = CRM_Utils_System::url('civicrm/event/register',
+          "id={$event['id']}&reset=1", TRUE, NULL, TRUE, TRUE);
+
+        $feeBlock = [];
+        $priceSetId = CRM_Price_BAO_PriceSet::getFor('civicrm_event', $event['id']);
+        if ($priceSetId) {
+          $setDetails = CRM_Price_BAO_PriceSet::getSetDetail($priceSetId, TRUE, TRUE);
+          foreach ($setDetails[$priceSetId]['fields'] as $fid => $fldVal) {
+            if (count($fldVal['options']) > 1) {
+              $feeBlock[] = $fldVal['label'];
+              foreach ($fldVal['options'] as $opt) {
+                $feeBlock[] = ' - ' . $opt['label'] . ' ' . CRM_Utils_Money::format($opt['amount']); 
+              }
+            } else {
+              foreach ($fldVal['options'] as $opt) {
+                $feeBlock[] = $fldVal['label'] . ' ' . CRM_Utils_Money::format($opt['amount']); 
+              }
+            }
+          }
+        }
+        $event["fee_block"] = implode('<br/>', $feeBlock);
+
+        if (!empty($event['registration_url'])) {
+          $event['registration_url_link'] = "<a href='{$event['registration_url']}'>Register</a>";
+        }
       }
       $entities = $result['values'];
     }

@@ -6,6 +6,7 @@ class CiviContactsQueryType
 {
   public static function config()
   {
+    CV::init();
     return [
       'fields' => [
         'civicontacts' => [
@@ -21,8 +22,11 @@ class CiviContactsQueryType
             'limit' => [
               'type' => 'Int',
             ],
-            'type_id' => [
+            'contact_type' => [
               'type' => 'String'
+            ],
+            'group' => [
+              'type' => 'Int'
             ],
             'order' => [
               'type' => 'String',
@@ -42,13 +46,30 @@ class CiviContactsQueryType
             // Fields to input arguments in the customizer
             'fields' => [
               // The array key corresponds to a key in the 'args' array above
-              'type_id' => [
+              'contact_type' => [
                 // Field label
-                'label' => 'Type ID',
+                'label' => 'Contact Type',
                 // Field description
-                'description' => 'Input a type ID.',
+                'description' => 'Select a contact type.',
                 // Default or custom field types can be used
-                'type' => 'text',
+                'type' => 'select',
+                'default' => 0,
+                'options' => [
+                  '- ANY -'      => 0,
+                  'Individual'   => 'Individual',
+                  'Organization' => 'Organization',
+                  'Household'    => 'Household',
+                ],
+              ],
+              'group' => [
+                // Field label
+                'label' => 'Contact Group',
+                // Field description
+                'description' => 'Select a contact group.',
+                // Default or custom field types can be used
+                'type' => 'select',
+                'default' => 0,
+                'options' => ['- ANY -' => 0] + array_flip(CRM_Contact_BAO_Group::getGroupsHierarchy(CRM_Core_PseudoConstant::group(), NULL, '|-- ', TRUE)),
               ],
 
               '_offset' => [
@@ -121,10 +142,22 @@ class CiviContactsQueryType
       CV::init();
 
       $options = CV::getOptions($args);
-      $result  = civicrm_api3('Contact', 'get', [
+      $params  = [
         'sequential' => 1,
         'options'    => $options,
-      ]);
+      ];
+      foreach (['contact_type', 'group'] as $para) {
+        if (!empty($args[$para])) {
+          $params[$para] = $args[$para];
+        }
+      }
+      $result = civicrm_api3('Contact', 'get', $params);
+      foreach ($result['values'] as &$contact) {
+        if (!empty($contact['image_URL'])) {
+          $contact['image'] = "<img src='{$contact['image_URL']}'>";
+        }
+      }
+
       $entities = $result['values'];
     }
     return $entities;
