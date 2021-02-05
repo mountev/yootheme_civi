@@ -28,6 +28,9 @@ class CiviContactsQueryType
             'group' => [
               'type' => 'Int'
             ],
+            'url_filter_field' => [
+              'type' => 'String'
+            ],
             'order' => [
               'type' => 'String',
             ],
@@ -70,6 +73,17 @@ class CiviContactsQueryType
                 'type' => 'select',
                 'default' => 0,
                 'options' => ['- ANY -' => 0] + array_flip(CRM_Contact_BAO_Group::getGroupsHierarchy(CRM_Core_PseudoConstant::group(), NULL, '|-- ', TRUE)),
+              ],
+
+              'url_filter_field' => [
+                // Field label
+                'label' => 'URL Filter Field',
+                // Field description
+                'description' => 'Select a field to filter with when supplied from URL.',
+                // Default or custom field types can be used
+                'type' => 'select',
+                'default' => '',
+                'options' => ['- NONE -' => ''] + CiviContactType::getFieldList(),
               ],
 
               '_offset' => [
@@ -138,7 +152,8 @@ class CiviContactsQueryType
   public static function resolve($root, array $args)
   {
     static $entities = [];
-    if (empty($entities)) {
+    $key = implode('_', $args);
+    if (empty($entities[$key])) {
       CV::init();
 
       $options = CV::getOptions($args);
@@ -151,6 +166,8 @@ class CiviContactsQueryType
           $params[$para] = $args[$para];
         }
       }
+      CV::applyUrlFilter($args, $params);
+
       $result = civicrm_api3('Contact', 'get', $params);
       foreach ($result['values'] as &$contact) {
         if (!empty($contact['image_URL'])) {
@@ -158,8 +175,8 @@ class CiviContactsQueryType
         }
       }
 
-      $entities = $result['values'];
+      $entities[$key] = $result['values'];
     }
-    return $entities;
+    return $entities[$key];
   }
 }

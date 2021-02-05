@@ -81,4 +81,17 @@ class CiviContactType
     return $entityFields;
   } 
 
+  /**
+   * @return array
+   */
+  public static function getFieldList()
+  {
+    $fieldList = [];
+    $entityFields = self::config();
+    foreach ($entityFields['fields'] as $key => $info) {
+      $fieldList[$info['metadata']['label']] = "cv_{$info['name']}";
+    }
+    return $fieldList;
+  }
+
 }

@@ -119,7 +119,8 @@ class CiviEventsQueryType
   public static function resolve($root, array $args)
   {
     static $entities = [];
-    if (empty($entities)) {
+    $key = implode('_', $args);
+    if (empty($entities[$key])) {
       CV::init();
 
       $options = CV::getOptions($args);
@@ -174,8 +175,8 @@ class CiviEventsQueryType
           $event['registration_url_link'] = "<a href='{$event['registration_url']}'>Register</a>";
         }
       }
-      $entities = $result['values'];
+      $entities[$key] = $result['values'];
     }
-    return $entities;
+    return $entities[$key];
   }
 }
