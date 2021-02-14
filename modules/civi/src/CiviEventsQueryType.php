@@ -25,6 +25,9 @@ class CiviEventsQueryType
             'event_type_id' => [
               'type' => 'Int'
             ],
+            'url_filter_field' => [
+              'type' => 'String'
+            ],
             'order' => [
               'type' => 'String',
             ],
@@ -52,6 +55,17 @@ class CiviEventsQueryType
                 'type' => 'select',
                 'default' => 0,
                 'options' => ['- ANY -' => 0] + array_flip(CRM_Event_PseudoConstant::eventType()),
+              ],
+
+              'url_filter_field' => [
+                // Field label
+                'label' => 'URL Filter Field',
+                // Field description
+                'description' => 'Select a field to filter with when supplied from URL.',
+                // Default or custom field types can be used
+                'type' => 'select',
+                'default' => '',
+                'options' => ['- NONE -' => ''] + CiviEventType::getFieldList(),
               ],
 
               '_offset' => [
@@ -138,6 +152,7 @@ class CiviEventsQueryType
           $params[$para] = $args[$para];
         }
       }
+      CV::applyUrlFilter($args, $params, 'cvevent_');
 
       $result = civicrm_api3('Event', 'get', $params);
       // for now we would stick to display field as used by event info page

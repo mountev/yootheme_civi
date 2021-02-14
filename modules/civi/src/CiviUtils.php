@@ -79,11 +79,11 @@ class CiviUtils {
     return $options;
   }
 
-  public static function applyUrlFilter(array $args, &$params) {
+  public static function applyUrlFilter(array $args, &$params, $prefix = 'cvcontact_') {
     if (!empty($args['url_filter_field'])) {
       $urlQuery = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
       parse_str($urlQuery, $query);
-      $uff = str_replace('cv_', '', $args['url_filter_field']);
+      $uff = str_replace($prefix, '', $args['url_filter_field']);
       $params[$uff] = (!empty($query[$args['url_filter_field']])) ? $query[$args['url_filter_field']] : '-111111';
     }
   }

@@ -89,7 +89,7 @@ class CiviContactType
     $fieldList = [];
     $entityFields = self::config();
     foreach ($entityFields['fields'] as $key => $info) {
-      $fieldList[$info['metadata']['label']] = "cv_{$info['name']}";
+      $fieldList[$info['metadata']['label'] . " (cvcontact_{$info['name']})"] = "cvcontact_{$info['name']}";
     }
     return $fieldList;
   }

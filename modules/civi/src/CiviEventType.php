@@ -65,4 +65,16 @@ class CiviEventType
     return $entityFields;
   } 
 
+  /**
+   * @return array
+   */
+  public static function getFieldList()
+  {
+    $fieldList = [];
+    $entityFields = self::config();
+    foreach ($entityFields['fields'] as $key => $info) {
+      $fieldList[$info['metadata']['label'] . " (cvevent_{$info['name']})"] = "cvevent_{$info['name']}";
+    }
+    return $fieldList;
+  }
 }
