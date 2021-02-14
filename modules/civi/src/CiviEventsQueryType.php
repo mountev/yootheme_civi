@@ -189,6 +189,9 @@ class CiviEventsQueryType
         if (!empty($event['registration_url'])) {
           $event['registration_url_link'] = "<a href='{$event['registration_url']}'>Register</a>";
         }
+        if (!empty($contact['geo_code_1'])) {
+          $contact['geo_code'] = "{$contact['geo_code_1']}, {$contact['geo_code_2']}";
+        }
       }
       $entities[$key] = $result['values'];
     }

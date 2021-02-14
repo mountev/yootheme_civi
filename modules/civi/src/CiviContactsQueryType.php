@@ -173,6 +173,9 @@ class CiviContactsQueryType
         if (!empty($contact['image_URL'])) {
           $contact['image'] = "<img src='{$contact['image_URL']}'>";
         }
+        if (!empty($contact['geo_code_1'])) {
+          $contact['geo_code'] = "{$contact['geo_code_1']}, {$contact['geo_code_2']}";
+        }
       }
 
       $entities[$key] = $result['values'];

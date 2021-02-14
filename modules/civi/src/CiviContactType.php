@@ -55,6 +55,7 @@ class CiviContactType
 
   public static $fieldsToAdd = [
     'image' => 'Image',
+    'geo_code' => 'Geocode Address',
   ];
 
   /**

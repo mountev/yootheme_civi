@@ -26,6 +26,7 @@ class CiviEventType
     'fee_block' => 'Fee Block',
     'registration_url'      => 'Registration URL',
     'registration_url_link' => 'Registration URL href Link',
+    'geo_code' => 'Geocode Address',
   ];
 
   /**
