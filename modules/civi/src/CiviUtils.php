@@ -32,9 +32,10 @@ class CiviUtils {
 
   public static function getEntityFields($apiResult, $fieldsToKeep = [], $fieldsToAdd = []) {
     $entityFields = [];
-    if (!empty($apiResult['values'])) {
-      foreach ($apiResult['values'] as $key => $field) {
-        if (empty($fieldsToKeep) || 
+    if (!empty($apiResult)) {
+      foreach ($apiResult as $idx => $field) {
+        $key = $field['name'];
+        if (empty($fieldsToKeep) ||
           (!empty($fieldsToKeep) && in_array($key, $fieldsToKeep))
         ) {
           $entityFields['fields'][$key] = [
@@ -73,8 +74,11 @@ class CiviUtils {
     if (!empty($args['limit'])) {
       $options['limit'] = $args['limit'];
     }
+    if (isset($args['offset'])) {
+      $options['offset'] = $args['offset'];
+    }
     if (!empty($args['order'])) {
-      $options['sort'] = $args['order'] . ' ' . $args['order_direction'];
+      $options['orderBy'] = [$args['order'] => $args['order_direction']];
     }
     return $options;
   }
@@ -84,7 +88,8 @@ class CiviUtils {
       $urlQuery = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
       parse_str($urlQuery, $query);
       $uff = str_replace($prefix, '', $args['url_filter_field']);
-      $params[$uff] = (!empty($query[$args['url_filter_field']])) ? $query[$args['url_filter_field']] : '-111111';
+      $val = (!empty($query[$args['url_filter_field']])) ? $query[$args['url_filter_field']] : '-111111';
+      $params['where'][] = [$uff, '=', $val];
     }
   }
 }
