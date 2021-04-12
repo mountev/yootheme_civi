@@ -5,12 +5,12 @@ class CiviEventType
 {
   public static $fieldsToKeep = [
     'id',
-    'event_title',
+    'title',
     'summary',
-    'event_description',
+    'description',
     'event_type_id',
-    'event_start_date',
-    'event_end_date',
+    'start_date',
+    'end_date',
     'is_online_registration',
     'registration_link_text',
     'registration_start_date',
@@ -38,7 +38,7 @@ class CiviEventType
     if (empty($entityFields)) {
       CV::init();
 
-      $result = civicrm_api3('Event', 'getfields', []);
+      $result = civicrm_api4('Event', 'getfields', []);
       $entityFields = CV::getEntityFields($result, self::$fieldsToKeep, self::$fieldsToAdd);
 
       // address fields

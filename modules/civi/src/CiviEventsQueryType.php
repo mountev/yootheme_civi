@@ -136,27 +136,21 @@ class CiviEventsQueryType
     $key = implode('_', $args);
     if (empty($entities[$key])) {
       CV::init();
+      $entities[$key] = [];
 
-      $options = CV::getOptions($args);
+      $params = CV::getOptions($args);
+      $params['where'][] = ['is_active', '=', TRUE];
 
-      $params  = [
-        'sequential' => 1,
-        'is_active'  => 1,
-        'options'    => $options,
-        // we could fetch location with chaining but that would result in many fields
-        // for now we would stick to display field as used by event info page
-        //'api.LocBlock.get' => ['api.Address.get' => []],
-      ];
       foreach (['event_type_id'] as $para) {
         if (!empty($args[$para])) {
-          $params[$para] = $args[$para];
+          $params['where'][] = [$para, '=', $args[$para]];
         }
       }
       CV::applyUrlFilter($args, $params, 'cvevent_');
 
-      $result = civicrm_api3('Event', 'get', $params);
+      $result = civicrm_api4('Event', 'get', $params);
       // for now we would stick to display field as used by event info page
-      foreach ($result['values'] as &$event) {
+      foreach ($result as &$event) {
         $params = ['entity_id' => $event['id'], 'entity_table' => 'civicrm_event'];
         $location = CRM_Core_BAO_Location::getValues($params, TRUE);
         if (!empty($location['address'][1])) {
@@ -192,8 +186,8 @@ class CiviEventsQueryType
         if (!empty($contact['geo_code_1'])) {
           $contact['geo_code'] = "{$contact['geo_code_1']}, {$contact['geo_code_2']}";
         }
+        $entities[$key][] = $event;
       }
-      $entities[$key] = $result['values'];
     }
     return $entities[$key];
   }
