@@ -67,7 +67,7 @@ class CiviContactType
     if (empty($entityFields)) {
       CV::init();
 
-      $result = civicrm_api3('Contact', 'getfields', []);
+      $result = civicrm_api4('Contact', 'getfields', []);
       $entityFields = CV::getEntityFields($result, self::$fieldsToKeep, self::$fieldsToAdd);
       if (!empty($entityFields)) {
         $entityFields['metadata'] = [

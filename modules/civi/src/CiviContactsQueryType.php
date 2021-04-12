@@ -155,30 +155,32 @@ class CiviContactsQueryType
     $key = implode('_', $args);
     if (empty($entities[$key])) {
       CV::init();
+      $entities[$key] = [];
 
-      $options = CV::getOptions($args);
-      $params  = [
-        'sequential' => 1,
-        'options'    => $options,
-      ];
-      foreach (['contact_type', 'group'] as $para) {
+      $params = CV::getOptions($args);
+      // apply other YTP UI filters
+      foreach (['contact_type'] as $para) {
         if (!empty($args[$para])) {
-          $params[$para] = $args[$para];
+          $params['where'][] = [$para, '=', $args[$para]];
         }
+      }
+      // filter with joins
+      if (!empty($args['group'])) {
+        $params['join'][] = ['GroupContact AS group_contact', FALSE];
+        $params['where'][] = ['group_contact.group_id', '=', $args['group']];
       }
       CV::applyUrlFilter($args, $params);
 
-      $result = civicrm_api3('Contact', 'get', $params);
-      foreach ($result['values'] as &$contact) {
+      $result = civicrm_api4('Contact', 'get', $params);
+      foreach ($result as &$contact) {
         if (!empty($contact['image_URL'])) {
           $contact['image'] = "<img src='{$contact['image_URL']}'>";
         }
         if (!empty($contact['geo_code_1'])) {
           $contact['geo_code'] = "{$contact['geo_code_1']}, {$contact['geo_code_2']}";
         }
+        $entities[$key][] = $contact;
       }
-
-      $entities[$key] = $result['values'];
     }
     return $entities[$key];
   }
