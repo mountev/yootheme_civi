@@ -2,7 +2,7 @@
 
 # Yootheme CiviCRM Bridge
 
-This is a bridge of [YooThemePro (YTP) Page Builder](https://yootheme.com/page-builder) with [CiviCRM](https://civicrm.org). It provides a front-end, 'drag and drop' layout builder for CiviCRM Entities, such as Contacts and Events, which are loaded as Dynamic Content [custom sources](https://yootheme.com/support/yootheme-pro/joomla/developers-sources) into YTP. It uses CiviCRM API3, and integrates with Dynaimic Content features including filtering and sorting by field, filtering by group and content type, conditional display of fields based on any other field value, date formating & image URLs.
+This is a bridge of [YooThemePro (YTP) Page Builder](https://yootheme.com/page-builder) with [CiviCRM](https://civicrm.org). It provides a front-end, 'drag and drop' layout builder for CiviCRM Entities, such as Contacts and Events, which are loaded as Dynamic Content [custom sources](https://yootheme.com/support/yootheme-pro/joomla/developers-sources) into YTP. It uses CiviCRM API4, and integrates with Dynaimic Content features including filtering and sorting by field, filtering by group and content type, conditional display of fields based on any other field value, date formating & image URLs.
 
 It is developed by [Deepak Srivastava](https://github.com/deepak-srivastava/) of [Mountev](https://mountev.co.uk/), with the support of [Joshua Gowans](https://lab.civicrm.org/josh) and [Nicol](https://lab.civicrm.org/nicol) Wistreich ([Vingle](https://github.com/vingle)).
 
