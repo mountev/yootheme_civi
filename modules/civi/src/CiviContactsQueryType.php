@@ -169,6 +169,9 @@ class CiviContactsQueryType
         $params['join'][] = ['GroupContact AS group_contact', FALSE];
         $params['where'][] = ['group_contact.group_id', '=', $args['group']];
       }
+      $params['chain'] = [
+        'address_0' => ['Address', 'get', ['where' => [['contact_id', '=', '$id'], ['is_primary', '=', 1]]]],
+      ];
       CV::applyUrlFilter($args, $params);
 
       $result = civicrm_api4('Contact', 'get', $params);
@@ -176,6 +179,15 @@ class CiviContactsQueryType
         if (!empty($contact['image_URL'])) {
           $contact['image'] = "<img src='{$contact['image_URL']}'>";
         }
+        // pull address fields into main result array
+        if (!empty($contact['address_0'][0])) {
+          foreach (CiviContactType::$fieldsToKeep as $fld) {
+            if (!empty($contact['address_0'][0][$fld]) && !in_array($fld, ['id'])) {
+              $contact[$fld] = $contact['address_0'][0][$fld];
+            }
+          }
+        }
+        // compute custom field
         if (!empty($contact['geo_code_1'])) {
           $contact['geo_code'] = "{$contact['geo_code_1']}, {$contact['geo_code_2']}";
         }
