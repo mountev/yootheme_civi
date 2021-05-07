@@ -80,6 +80,7 @@ class CiviUtils {
     if (!empty($args['order'])) {
       $options['orderBy'] = [$args['order'] => $args['order_direction']];
     }
+    $options['checkPermissions'] = FALSE;
     return $options;
   }
 
