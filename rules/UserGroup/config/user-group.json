@@ -1,0 +1,8 @@
+{
+    "name": "yooessentials_access_usergroup",
+    "title": "User Group",
+    "group": "site",
+    "collection": "User",
+    "description": "Validates against the current User Group.",
+    "icon": "${url:~theme/rules/UserGroup/assets/user-level.svg}"
+}
